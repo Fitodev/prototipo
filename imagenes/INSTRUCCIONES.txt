@@ -1,0 +1,38 @@
+CARPETA DE IMAGENES — Fritz's Assistant
+=========================================
+
+Sube aqui todas las imagenes de los banos modulares.
+
+FORMATO REQUERIDO:
+- Extension: .jpg (preferido) o .png
+- Relacion de aspecto recomendada: 4:3 (horizontal)
+- Resolucion sugerida: 800x600 px o superior
+
+NOMBRES DE ARCHIVO ESPERADOS:
+
+PROYECTO: Coronel Godoy (prefijo CG_)
+  CG_tipo_A_azul.jpg
+  CG_tipo_B_rojo.jpg
+  CG_tipo_B_naranja.jpg
+  CG_tipo_B_cafe.jpg
+  CG_tipo_A_negro.jpg
+  CG_tipo_A_magenta.jpg
+  CG_tipo_B_verde.jpg
+
+PROYECTO: Diagonal Paraguay (prefijo DP_)
+  DP_tipo_A_gris.jpg
+  DP_tipo_A_morado.jpg
+  DP_tipo_A_mostaza.jpg
+  DP_tipo_B_turquesa.jpg
+  DP_tipo_A_burdeo.jpg
+  DP_tipo_A_azul.jpg
+  DP_tipo_B_rojo.jpg
+  DP_tipo_B_cafe.jpg
+  DP_tipo_B_blanco.jpg
+  DP_tipo_A_beige.jpg
+
+NOTA: El nombre del archivo en esta carpeta debe coincidir EXACTAMENTE
+con el campo "imagen" del bano correspondiente en index.html (Seccion 7).
+
+Si una imagen no se encuentra, el sistema muestra un placeholder gris
+automaticamente. No hay errores ni pantallas en blanco.

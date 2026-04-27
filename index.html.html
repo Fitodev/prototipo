@@ -1,0 +1,1281 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Fritz's Assistant — Banos Modulares</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet"/>
+
+  <!-- ============================================================
+       FRITZ'S ASSISTANT v3 — STANDALONE
+       Archivo: index.html
+       Carpeta de imagenes: imagenes/
+
+  ================================================================
+
+  INDICE DE SECCIONES (para encontrar rapidamente donde editar):
+
+    [SECCION 1] COLORES Y TIPOGRAFIA ........... linea ~60
+    [SECCION 2] HEADER Y LOGO .................. linea ~160
+    [SECCION 3] BURBUJAS DEL CHAT .............. linea ~220
+    [SECCION 4] FICHA TECNICA .................. linea ~280
+    [SECCION 5] CHIPS / BOTONES ................ linea ~360
+    [SECCION 6] AREA DE INPUT .................. linea ~400
+    [SECCION 7] BASE DE DATOS PROYECTOS ........ linea ~475
+    [SECCION 8] RESPUESTAS DEL BOT ............. linea ~600
+    [SECCION 9] LOGICA DEL CHATBOT ............. linea ~680
+    [SECCION 10] UTILIDADES .................... linea ~850
+
+  ================================================================ -->
+
+  <style>
+
+    /* ============================================================
+       [SECCION 1] COLORES Y TIPOGRAFIA
+       ============================================================
+
+       COMO CAMBIAR COLORES PRINCIPALES:
+       Modifica solo las variables --navy, --gold y sus variantes.
+       Los colores se aplican automaticamente en todo el sistema.
+
+       VARIABLES DISPONIBLES:
+       --navy        : Fondo principal (azul marino oscuro)
+       --navy-mid    : Fondo medio del header/footer
+       --navy-lite   : Fondo de inputs y elementos secundarios
+       --navy-deep   : Texto sobre fondo dorado
+       --gold        : Color de acento principal (dorado)
+       --gold-lite   : Version mas clara del dorado (hover, tags)
+       --gold-dim    : Dorado muy transparente (fondos sutiles)
+       --white       : Blanco puro para textos principales
+       --off-white   : Blanco calido para texto en burbujas
+       --muted       : Gris azulado para textos secundarios
+       --bot-bubble  : Fondo de las burbujas del bot
+       --radius-lg   : Radio de bordes grandes (burbuja, ficha)
+       --radius-md   : Radio de bordes medianos
+       --font-head   : Fuente para titulos (Syne)
+       --font-body   : Fuente para texto corrido (DM Sans)
+
+       EJEMPLOS DE CAMBIO DE PALETA:
+       Para verde oscuro: --navy: #0B3A1F; --gold: #4CAF50;
+       Para gris oscuro:  --navy: #1A1A2E; --gold: #E94560;
+       ============================================================ */
+
+    :root {
+      --navy:       #0B1F3A;
+      --navy-mid:   #112540;
+      --navy-lite:  #1A3358;
+      --navy-deep:  #081629;
+      --gold:       #C9A646;
+      --gold-lite:  #E2C272;
+      --gold-dim:   rgba(201,166,70,.15);
+      --white:      #FFFFFF;
+      --off-white:  #F0EDE4;
+      --muted:      #7A8FA8;
+      --bot-bubble: #13294A;
+      --radius-lg:  18px;
+      --radius-md:  12px;
+      --font-head:  'Syne', sans-serif;
+      --font-body:  'DM Sans', sans-serif;
+    }
+
+    *,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+    html, body { height:100%; }
+    body {
+      font-family: var(--font-body);
+      background: var(--navy);
+      color: var(--white);
+      display: flex;
+      flex-direction: column;
+      min-height: 100dvh;
+      overflow-x: hidden;
+      background-image:
+        linear-gradient(rgba(201,166,70,.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(201,166,70,.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+
+    /* ============================================================
+       [SECCION 2] HEADER Y LOGO
+       ============================================================
+
+       COMO CAMBIAR EL LOGO (iniciales "FA"):
+       Busca <span class="logo-initials">FA</span> en el HTML
+       y reemplaza "FA" por las iniciales deseadas.
+
+       COMO CAMBIAR EL NOMBRE EN EL HEADER:
+       Busca <span class="header-name"> en el HTML
+       y cambia el texto "Fritz's Assistant".
+
+       COMO CAMBIAR EL SUBTITULO:
+       Busca id="headerSub" en el HTML y cambia el texto.
+       El subtitulo cambia automaticamente al seleccionar proyecto.
+
+       COMO CAMBIAR EL COLOR DEL LOGO:
+       Modifica el background en .logo-wrap (lineas de gradient).
+       ============================================================ */
+
+    .header {
+      background: rgba(17,37,64,.95);
+      border-bottom: 1px solid rgba(201,166,70,.18);
+      padding: 10px 16px;
+      position: sticky; top: 0; z-index: 100;
+      backdrop-filter: blur(12px);
+    }
+    .header-inner {
+      display: flex; align-items: center; gap: 11px;
+      max-width: 500px; margin: 0 auto;
+    }
+    .logo-wrap {
+      width: 38px; height: 38px; border-radius: 10px;
+      background: linear-gradient(135deg, var(--gold) 0%, #8B6914 100%);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; position: relative; overflow: hidden;
+    }
+    .logo-wrap::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,.2), transparent);
+    }
+    .logo-initials {
+      font-family: var(--font-head); font-weight: 800; font-size: 12px;
+      color: var(--navy); letter-spacing: .05em; position: relative; z-index: 1;
+    }
+    .header-info { flex: 1; display: flex; flex-direction: column; gap: 1px; }
+    .header-name {
+      font-family: var(--font-head); font-weight: 700; font-size: 14px;
+      color: var(--white); letter-spacing: .02em;
+    }
+    .header-sub { font-size: 10.5px; color: var(--muted); font-weight: 300; }
+    .header-right { display: flex; align-items: center; gap: 6px; }
+    .status-pill {
+      display: flex; align-items: center; gap: 5px;
+      background: rgba(61,221,120,.1); border: 1px solid rgba(61,221,120,.2);
+      border-radius: 20px; padding: 3px 9px;
+    }
+    .status-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: #3DDD78; box-shadow: 0 0 5px #3DDD78;
+      animation: pulse 2.5s ease-in-out infinite;
+    }
+    .status-text { font-size: 10px; color: #3DDD78; font-weight: 500; letter-spacing: .04em; }
+
+    /* Boton reiniciar conversacion */
+    .btn-reset {
+      background: transparent;
+      border: 1px solid rgba(201,166,70,.2);
+      border-radius: 8px;
+      padding: 4px 9px;
+      color: var(--muted);
+      font-family: var(--font-body);
+      font-size: 10px;
+      cursor: pointer;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      transition: all .15s;
+    }
+    .btn-reset:hover {
+      background: rgba(201,166,70,.1);
+      border-color: rgba(201,166,70,.35);
+      color: var(--gold-lite);
+    }
+
+    @keyframes pulse {
+      0%,100% { opacity:1; transform:scale(1); }
+      50% { opacity:.5; transform:scale(1.3); }
+    }
+
+    /* ============================================================
+       [SECCION 3] BURBUJAS DEL CHAT
+       ============================================================
+
+       COMO CAMBIAR EL COLOR DE LAS BURBUJAS DEL BOT:
+       Modifica la variable --bot-bubble en :root (Seccion 1)
+       o directamente .msg.bot .bubble { background: ... }
+
+       COMO CAMBIAR EL COLOR DE LAS BURBUJAS DEL USUARIO:
+       Modifica el gradient en .msg.user .bubble { background: ... }
+       Por defecto usa --gold para las burbujas del usuario.
+
+       COMO CAMBIAR EL TAMANO DE LA FUENTE EN EL CHAT:
+       Modifica font-size en .bubble (actualmente 14px).
+
+       COMO CAMBIAR EL ANCHO MAXIMO DEL CHAT:
+       Modifica max-width en .chat y .header-inner (actualmente 500px).
+       ============================================================ */
+
+    .chat {
+      flex: 1; overflow-y: auto;
+      padding: 20px 14px 12px;
+      display: flex; flex-direction: column; gap: 10px;
+      max-width: 500px; width: 100%; margin: 0 auto;
+      scroll-behavior: smooth;
+    }
+    .chat::-webkit-scrollbar { width: 3px; }
+    .chat::-webkit-scrollbar-thumb { background: var(--navy-lite); border-radius: 3px; }
+
+    .msg {
+      display: flex; flex-direction: column;
+      max-width: 86%;
+      animation: msgIn .28s cubic-bezier(.34,1.56,.64,1) both;
+    }
+    @keyframes msgIn {
+      from { opacity:0; transform:translateY(12px) scale(.97); }
+      to   { opacity:1; transform:translateY(0) scale(1); }
+    }
+    .msg.bot  { align-self: flex-start; align-items: flex-start; }
+    .msg.user { align-self: flex-end;   align-items: flex-end; }
+
+    .bubble {
+      padding: 11px 15px;
+      border-radius: var(--radius-lg);
+      font-size: 14px; line-height: 1.6;
+    }
+    .msg.bot .bubble {
+      background: var(--bot-bubble);
+      border-bottom-left-radius: 4px;
+      color: var(--off-white);
+      border: 1px solid rgba(255,255,255,.05);
+      box-shadow: 0 2px 12px rgba(0,0,0,.2);
+    }
+    .msg.user .bubble {
+      background: linear-gradient(135deg, var(--gold), #b8932e);
+      border-bottom-right-radius: 4px;
+      color: var(--navy-deep);
+      font-weight: 500;
+      box-shadow: 0 2px 12px rgba(201,166,70,.25);
+    }
+    .ts { font-size: 10px; color: var(--muted); margin-top: 3px; padding: 0 4px; }
+
+    /* Typing indicator */
+    .typing-wrap { align-self: flex-start; animation: msgIn .28s ease both; }
+    .typing-bubble {
+      display: flex; gap: 5px; align-items: center;
+      padding: 12px 15px;
+      background: var(--bot-bubble);
+      border: 1px solid rgba(255,255,255,.05);
+      border-radius: var(--radius-lg);
+      border-bottom-left-radius: 4px;
+    }
+    .typing-bubble span {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--muted);
+      animation: dot 1.3s ease-in-out infinite;
+    }
+    .typing-bubble span:nth-child(2) { animation-delay: .18s; }
+    .typing-bubble span:nth-child(3) { animation-delay: .36s; }
+    @keyframes dot {
+      0%,80%,100% { transform:translateY(0); opacity:.35; }
+      40% { transform:translateY(-5px); opacity:1; }
+    }
+
+    /* ============================================================
+       [SECCION 4] FICHA TECNICA
+       ============================================================
+
+       COMO CAMBIAR EL COLOR DEL BORDE DE LA FICHA:
+       Modifica border en .ficha (actualmente rgba(201,166,70,.22))
+
+       COMO CAMBIAR EL COLOR DEL NOMBRE DEL PROYECTO EN LA FICHA:
+       Modifica color en .ficha-proyecto (actualmente var(--gold))
+
+       COMO CAMBIAR EL TAMANO DE LA IMAGEN:
+       Modifica aspect-ratio en .ficha-img (actualmente 4/3)
+       Opciones: 1/1 (cuadrada), 16/9 (panoramica), 3/2, etc.
+
+       COMO CAMBIAR EL FONDO DEL PLACEHOLDER DE IMAGEN:
+       Modifica el gradient en .ficha-placeholder
+
+       COMO AGREGAR UN NUEVO CAMPO A LA FICHA:
+       En la funcion mostrarFicha() (Seccion 9), agrega dentro
+       de ficha-rows un nuevo bloque .ficha-row con el icono y texto.
+       ============================================================ */
+
+    .ficha {
+      background: var(--bot-bubble);
+      border: 1px solid rgba(201,166,70,.22);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      max-width: 310px;
+      box-shadow: 0 4px 24px rgba(0,0,0,.3);
+      animation: msgIn .35s cubic-bezier(.34,1.4,.64,1) both;
+    }
+    .ficha-img {
+      width: 100%; display: block;
+      aspect-ratio: 4/3; object-fit: cover;
+      background: var(--navy-lite);
+    }
+    .ficha-placeholder {
+      width: 100%; aspect-ratio: 4/3;
+      background: linear-gradient(135deg, var(--navy-lite), #1d3f70);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 6px; color: var(--muted);
+    }
+    .ficha-placeholder svg { opacity: .3; }
+    .ficha-placeholder span { font-size: 10px; letter-spacing: .08em; text-transform: uppercase; }
+    .ficha-head {
+      padding: 12px 14px 6px;
+      border-bottom: 1px solid rgba(201,166,70,.12);
+    }
+    .ficha-proyecto {
+      font-size: 9px; letter-spacing: .12em; text-transform: uppercase;
+      color: var(--gold); font-weight: 600; margin-bottom: 4px;
+    }
+    .ficha-titulo {
+      font-family: var(--font-head); font-size: 17px; font-weight: 700;
+      color: var(--white); line-height: 1.2;
+    }
+    .ficha-tipo { font-size: 11px; color: var(--muted); margin-top: 2px; font-weight: 400; }
+    .ficha-rows { padding: 8px 14px 14px; display: flex; flex-direction: column; gap: 0; }
+    .ficha-row {
+      display: flex; gap: 9px;
+      padding: 7px 0;
+      border-bottom: 1px solid rgba(255,255,255,.05);
+      font-size: 13px; color: var(--off-white); line-height: 1.4;
+    }
+    .ficha-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .ficha-icon { flex-shrink: 0; font-size: 15px; width: 18px; text-align: center; margin-top: 1px; }
+    .ficha-label { color: rgba(201,166,70,.7); font-weight: 500; margin-right: 3px; font-size: 12px; }
+    .extra-tag {
+      display: inline-block;
+      background: rgba(201,166,70,.1); border: 1px solid rgba(201,166,70,.2);
+      border-radius: 6px; padding: 2px 7px; font-size: 11.5px; color: var(--gold-lite);
+      margin: 2px 2px 0 0;
+    }
+
+    /* ============================================================
+       [SECCION 5] CHIPS / BOTONES DE SELECCION RAPIDA
+       ============================================================
+
+       COMO CAMBIAR EL COLOR DE LOS CHIPS DE PROYECTOS:
+       Modifica .chip.proyecto { background y border-color }
+
+       COMO CAMBIAR EL COLOR DE LOS CHIPS DE COLORES:
+       Modifica .chip { background y border }
+
+       COMO CAMBIAR EL TAMANO DE LOS CHIPS:
+       Modifica font-size y padding en .chip
+       ============================================================ */
+
+    .chips-wrap {
+      max-width: 500px; margin: 4px auto 0; padding: 0 14px;
+      display: flex; gap: 7px; flex-wrap: wrap;
+    }
+    .chip {
+      padding: 6px 13px; border-radius: 20px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      color: var(--white); font-family: var(--font-body); font-size: 12.5px;
+      cursor: pointer; transition: all .15s; white-space: nowrap;
+      display: flex; align-items: center; gap: 5px;
+    }
+    .chip:hover { background: rgba(201,166,70,.15); border-color: rgba(201,166,70,.35); transform: translateY(-1px); }
+    .chip:active { transform: scale(.95); }
+    .chip.proyecto { background: rgba(201,166,70,.08); border-color: rgba(201,166,70,.25); font-weight: 500; }
+    .chip.cambiar-proyecto {
+      background: rgba(100,130,180,.08);
+      border-color: rgba(100,130,180,.25);
+      color: var(--muted);
+      font-size: 11.5px;
+    }
+
+    /* ============================================================
+       [SECCION 6] AREA DE INPUT
+       ============================================================
+
+       COMO CAMBIAR EL COLOR DEL INPUT:
+       Modifica background en #txtInput (actualmente --navy-lite)
+
+       COMO CAMBIAR EL COLOR DEL BORDE DEL INPUT AL ENFOCAR:
+       Modifica border-color en #txtInput:focus
+
+       COMO CAMBIAR EL COLOR DEL BOTON ENVIAR:
+       Modifica background en #btnSend (actualmente gradient dorado)
+
+       COMO CAMBIAR EL ICONO DEL BOTON ENVIAR:
+       Reemplaza el SVG dentro de <button id="btnSend"> en el HTML
+       ============================================================ */
+
+    .input-area {
+      background: rgba(17,37,64,.97);
+      border-top: 1px solid rgba(201,166,70,.12);
+      padding: 10px 14px 18px;
+      position: sticky; bottom: 0;
+      backdrop-filter: blur(12px);
+    }
+    .input-row {
+      display: flex; gap: 9px; align-items: center;
+      max-width: 500px; margin: 0 auto;
+    }
+    #txtInput {
+      flex: 1;
+      background: var(--navy-lite);
+      border: 1px solid rgba(201,166,70,.18);
+      border-radius: 24px;
+      padding: 12px 18px;
+      font-family: var(--font-body); font-size: 15px;
+      color: var(--white); outline: none;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    #txtInput::placeholder { color: var(--muted); }
+    #txtInput:focus {
+      border-color: rgba(201,166,70,.55);
+      box-shadow: 0 0 0 3px rgba(201,166,70,.08);
+    }
+    #btnSend {
+      width: 46px; height: 46px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold), #9e7820);
+      border: none; cursor: pointer; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      transition: transform .15s, opacity .15s;
+      box-shadow: 0 3px 10px rgba(201,166,70,.3);
+    }
+    #btnSend:hover { opacity: .9; }
+    #btnSend:active { transform: scale(.9); }
+    #btnSend svg { width: 17px; height: 17px; stroke: #0B1F3A; }
+
+    /* Divider contextual */
+    .ctx-divider {
+      align-self: center;
+      display: flex; align-items: center; gap: 8px;
+      font-size: 10.5px; color: var(--muted);
+      letter-spacing: .06em; text-transform: uppercase;
+      padding: 4px 0;
+      animation: msgIn .3s ease both;
+    }
+    .ctx-divider::before, .ctx-divider::after {
+      content: ''; flex: 1; height: 1px;
+      background: rgba(255,255,255,.07);
+      min-width: 30px;
+    }
+
+    /* Banner de nombre recordado */
+    .banner-recall {
+      align-self: center;
+      background: rgba(201,166,70,.08);
+      border: 1px solid rgba(201,166,70,.2);
+      border-radius: 10px;
+      padding: 6px 14px;
+      font-size: 11px; color: var(--gold-lite);
+      letter-spacing: .04em;
+      animation: msgIn .3s ease both;
+    }
+
+  </style>
+</head>
+<body>
+
+<!-- ── HEADER ──────────────────────────────────────────────── -->
+<!--
+  COMO CAMBIAR EL NOMBRE MOSTRADO EN EL HEADER:
+  Edita el texto dentro de <span class="header-name">
+  COMO CAMBIAR LAS INICIALES DEL LOGO:
+  Edita el texto dentro de <span class="logo-initials">
+-->
+<header class="header">
+  <div class="header-inner">
+    <div class="logo-wrap">
+      <span class="logo-initials">FA</span>
+    </div>
+    <div class="header-info">
+      <span class="header-name">Fritz's Assistant</span>
+      <span class="header-sub" id="headerSub">Banos Modulares &middot; Asistente tecnico</span>
+    </div>
+    <div class="header-right">
+      <button class="btn-reset" onclick="reiniciarConversacion()" title="Reiniciar conversacion">
+        Reiniciar
+      </button>
+      <div class="status-pill">
+        <div class="status-dot"></div>
+        <span class="status-text">EN LINEA</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ── CHAT ────────────────────────────────────────────────── -->
+<main class="chat" id="chat"></main>
+
+<!-- ── INPUT ───────────────────────────────────────────────── -->
+<footer class="input-area">
+  <div class="chips-wrap" id="chips" style="display:none; margin-bottom:8px"></div>
+  <div class="input-row">
+    <input
+      type="text"
+      id="txtInput"
+      placeholder="Escribe tu nombre..."
+      autocomplete="off"
+      autocorrect="off"
+      spellcheck="false"
+    />
+    <button id="btnSend">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="22" y1="2" x2="11" y2="13"/>
+        <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+      </svg>
+    </button>
+  </div>
+</footer>
+
+<script>
+/* ================================================================
+   FRITZ'S ASSISTANT v3 — LOGICA PRINCIPAL
+   Archivo: index.html (seccion script)
+
+   INDICE DEL SCRIPT:
+   [SECCION 7]  BASE DE DATOS PROYECTOS Y BANOS ......... ~linea 10
+   [SECCION 8]  RESPUESTAS NATURALES DEL BOT ............ ~linea 140
+   [SECCION 9]  LOGICA DEL CHATBOT ...................... ~linea 210
+   [SECCION 10] UTILIDADES Y HELPERS ................... ~linea 410
+   ================================================================ */
+
+
+/* ================================================================
+   [SECCION 7] BASE DE DATOS — PROYECTOS Y BANOS
+
+   ESTRUCTURA DE CADA BANO:
+   {
+     label:  '(emoji) Nombre'     <- texto en el chip/boton
+     color:  '(emoji) NOMBRE'     <- titulo en la ficha tecnica
+     tipo:   'Tipo A'             <- subtitulo en la ficha
+     puerta: 'Izquierda (afuera)' <- especificacion de puerta
+     cara2:  'Se tapa'            <- especificacion cara 2
+     extras: ['nota1', 'nota2']   <- notas adicionales (array vacio si no hay)
+     imagen: 'nombre-archivo.jpg' <- nombre del archivo en la carpeta /imagenes
+   }
+
+   COMO CAMBIAR EL COLOR DE UN BANO:
+   Busca el proyecto y el bano, modifica el campo "color".
+   Ejemplo: cambiar de '(emoji) AZUL' a '(emoji) AZUL CLARO'
+
+   COMO CAMBIAR LA PUERTA DE UN BANO:
+   Busca el proyecto y el bano, modifica el campo "puerta".
+   Ejemplo: 'Izquierda (afuera)' -> 'Derecha (adentro)'
+
+   COMO AGREGAR UNA NOTA EXTRA A UN BANO:
+   Busca el bano y agrega un string al array "extras".
+   Ejemplo: extras: ['nota existente', 'nueva nota aqui']
+
+   COMO CAMBIAR LA IMAGEN DE UN BANO:
+   1. Sube la nueva imagen a la carpeta /imagenes
+   2. Cambia el campo "imagen" al nuevo nombre de archivo
+   Ejemplo: imagen: 'nuevo-nombre.jpg'
+
+   COMO AGREGAR UN BANO NUEVO A UN PROYECTO:
+   Copia un bloque de bano existente, cambia la clave (ej: "blanco")
+   y rellena todos los campos. Sube la imagen a /imagenes.
+
+   COMO AGREGAR UN PROYECTO NUEVO:
+   Copia el bloque de un proyecto existente, cambia la clave
+   (ej: "nuevoProyecto"), actualiza nombre, emoji, keywords
+   y agrega todos los banos con su estructura.
+
+   COMO CAMBIAR LAS PALABRAS CLAVE DE UN PROYECTO:
+   Modifica el array "keywords". El sistema detecta el proyecto
+   si el usuario escribe cualquiera de esas palabras.
+   ================================================================ */
+
+const PROYECTOS = {
+
+  /* ── PROYECTO 1: CORONEL GODOY ─────────────────────────────── */
+  coronelGodoy: {
+    nombre:   'Coronel Godoy',
+    emoji:    '🏗',                  /* <- cambiar emoji del proyecto aqui */
+    keywords: ['coronel','godoy','coronel godoy','1','primero','uno'],
+    banos: {
+
+      azul: {
+        label:  'Azul',
+        color:  'AZUL',
+        tipo:   'Tipo A',
+        puerta: 'la puerta se abre a la Izquierda hacia afuera',
+        cara2:  'la cara 2 se tapa',
+        extras: [],
+        imagen: 'CG_tipo_A_azul.jpeg'
+      },
+      rojo: {
+        label:  'Rojo',
+        color:  'ROJO',
+        tipo:   'Tipo B',
+        puerta: 'la puerta se abre hacia la Derecha hacia afuera',
+        cara2:  'la cara 2 Se tapa',
+        extras: [],
+        imagen: 'CG_tipo_B_rojo.jpeg'
+      },
+      naranja: {
+        label:  'Naranja',
+        color:  'NARANJA',
+        tipo:   'Tipo B',
+        puerta: 'la puerta se abre hacia la Derecha hacia afuera',
+        cara2:  'Se tapa',
+        extras: ['tiene Cambio conexion electrica y sanitaria'],
+        imagen: 'CG_tipo_B_naranja.jpeg'
+      },
+      cafe: {
+        label:  'Cafe',
+        color:  'CAFE',
+        tipo:   'Tipo B',
+        puerta: 'la puerta se abre hacia la Izquierda hacia afuera',
+        cara2:  'la cara 2 Se tapa',
+        extras: [],
+        imagen: 'CG_tipo_B_cafe.jpeg'
+      },
+      negro: {
+        label:  'Negro',
+        color:  'NEGRO',
+        tipo:   'Tipo A',
+        puerta: 'la puerta se abre hacia la Izquierda hacia afuera',
+        cara2:  'la cara 2 No se tapa',
+        extras: [''],
+        imagen: 'CG_tipo_A_negro.jpeg'
+      },
+      magenta: {
+        label:  'Magenta',
+        color:  'MAGENTA',
+        tipo:   'Tipo A',
+        puerta: 'Derecha (afuera)',
+        cara2:  'Se tapa',
+        extras: [''],
+        imagen: 'CG_tipo_A_magenta.jpeg'
+      },
+      verde: {
+        label:  'Verde',
+        color:  'VERDE',
+        tipo:   "Tipo B'",
+        puerta: 'Izquierda (adentro)',
+        cara2:  'No se tapa',
+        extras: ['Sin tapar', 'Cambio conexion electrica'],
+        imagen: 'CG_tipo_B_verde.jpeg'
+      }
+
+      /* ── PLANTILLA PARA AGREGAR BANO EN CORONEL GODOY:
+      blanco: {
+        label:  'Blanco',
+        color:  'BLANCO',
+        tipo:   'Tipo C',
+        puerta: 'Derecha (afuera)',
+        cara2:  'Se tapa',
+        extras: ['Nota opcional aqui'],
+        imagen: 'CG_tipo_C_blanco.jpeg'
+      },
+      ── */
+    }
+  },
+
+  /* ── PROYECTO 2: DIAGONAL PARAGUAY ──────────────────────────── */
+  diagonalParaguay: {
+    nombre:   'Diagonal Paraguay',
+    emoji:    '🏢',
+    keywords: ['diagonal','paraguay','diagonal paraguay','2','segundo','dos'],
+    banos: {
+
+      gris: {
+        label:  'Gris',
+        color:  'GRIS',
+        tipo:   'Tipo A',
+        puerta: 'Izquierda (afuera)',
+        cara2:  'Sin tapar 2C',
+        extras: [],
+        imagen: 'DP_tipo_A_gris.jpg'
+      },
+      morado: {
+        label:  'Morado',
+        color:  'MORADO',
+        tipo:   'Tipo A',
+        puerta: 'Izquierda (afuera)',
+        cara2:  'Se tapa',
+        extras: ['F-60'],
+        imagen: 'DP_tipo_A_morado.jpg'
+      },
+      mostaza: {
+        label:  'Mostaza',
+        color:  'MOSTAZA',
+        tipo:   'Tipo A',
+        puerta: 'Izquierda (afuera)',
+        cara2:  'Se tapa',
+        extras: ['Cambio conexion electrica y AP'],
+        imagen: 'DP_tipo_A_mostaza.jpg'
+      },
+      turquesa: {
+        label:  'Turquesa',
+        color:  'TURQUESA',
+        tipo:   'Tipo B',
+        puerta: 'Derecha (afuera)',
+        cara2:  'Se tapa',
+        extras: ['Descarga 50mm', 'Lavadora'],
+        imagen: 'DP_tipo_B_turquesa.jpg'
+      },
+      burdeo: {
+        label:  'Burdeo',
+        color:  'BURDEO',
+        tipo:   'Tipo A',
+        puerta: 'la puerta se abre hacia la Derecha y hacia afuera',
+        cara2:  'la cara 2 Se tapa',
+        extras: ['Descarga 50mm', 'Lavadora'],
+        imagen: 'DP_tipo_A_burdeo.jpg'
+      },
+      azul: {
+        label:  'Azul',
+        color:  'AZUL',
+        tipo:   'Tipo A',
+        puerta: 'la puerta se abre hacia la Derecha hacia afuera',
+        cara2:  'Se tapa',
+        extras: ['Lavadora'],
+        imagen: 'DP_tipo_A_azul.jpg'
+      },
+      rojo: {
+        label:  'Rojo',
+        color:  'ROJO',
+        tipo:   'Tipo B',
+        puerta: 'la puerta se abre hacia la Derecha hacia afuera',
+        cara2:  'la cara 2 Se tapa',
+        extras: ['Lavadora'],
+        imagen: 'DP_tipo_B_rojo.jpg'
+      },
+      cafe: {
+        label:  'Cafe',
+        color:  'CAFE',
+        tipo:   'Tipo B',
+        puerta: 'la puerta se abre hacia la Izquierda hacia adentro',
+        cara2:  'Se tapa',
+        extras: ['Lavadora'],
+        imagen: 'DP_tipo_B_cafe.jpg'
+      },
+      blanco: {
+        label:  'Blanco',
+        color:  'BLANCO',
+        tipo:   'Tipo B',
+        puerta: 'Derecha (afuera)',
+        cara2:  'Sin tapar 2C',
+        extras: ['va con F-60'],
+        imagen: 'DP_tipo_B_blanco.jpg'
+      },
+      beige: {
+        label:  'Beige',
+        color:  'BEIGE',
+        tipo:   'Tipo A',
+        puerta: 'Derecha (afuera)',
+        cara2:  'Se tapa',
+        extras: ['Cambio descarga', 'Lavadora'],
+        imagen: 'DP_tipo_A_beige.jpg'
+      }
+
+      /* ── PLANTILLA PARA AGREGAR BANO EN DIAGONAL PARAGUAY:
+      verde: {
+        label:  'Verde',
+        color:  'VERDE',
+        tipo:   'Tipo B',
+        puerta: 'la puerta se abre Izquierda (hacia afuera)',
+        cara2:  'la cara 2 Se tapa',
+        extras: [],
+        imagen: 'DP_tipo_B_verde.jpg'
+      },
+      ── */
+    }
+  }
+
+  /* ── PLANTILLA PARA AGREGAR UN NUEVO PROYECTO:
+  nuevoProyecto: {
+    nombre:   'Nombre del Proyecto',
+    emoji:    '🏛',
+    keywords: ['clave1','clave2','3','tercero'],
+    banos: {
+      colorX: {
+        label:  'ColorX',
+        color:  'COLORX',
+        tipo:   'Tipo A',
+        puerta: 'Derecha (afuera)',
+        cara2:  'Se tapa',
+        extras: [],
+        imagen: 'NP_tipo_A_colorX.jpg'
+      }
+    }
+  },
+  ── */
+};
+
+
+/* ================================================================
+   [SECCION 8] RESPUESTAS NATURALES DEL BOT
+
+   COMO AGREGAR VARIACIONES A LAS RESPUESTAS:
+   Cada clave contiene un array de textos. El bot elige uno
+   al azar cada vez. Agrega mas strings al array para mayor
+   variedad. Usa <strong>texto</strong> para negritas.
+
+   COMO CAMBIAR EL TEXTO DE BIENVENIDA:
+   Modifica los strings en bienvenida[]
+
+   COMO CAMBIAR LO QUE DICE EL BOT AL PEDIR EL PROYECTO:
+   Modifica los strings en preguntaProyecto[]
+
+   COMO CAMBIAR LO QUE DICE AL PEDIR EL COLOR:
+   Modifica los strings en preguntaColor[]
+
+   COMO CAMBIAR EL MENSAJE DE "NO ENTENDI":
+   Modifica los strings en noEntiendo[]
+
+   COMO CAMBIAR EL MENSAJE AL TERMINAR UNA CONSULTA:
+   Modifica los strings en otraConsulta[]
+   ================================================================ */
+
+const POOL = {
+
+  bienvenida: saludo => [
+    `${saludo}<br><br>Soy el asistente de <strong>Fritz's Banos Modulares</strong>. Tengo todas las especificaciones tecnicas que necesitas, al instante.<br><br>Con quien tengo el gusto?`,
+    `${saludo}<br><br>Soy <strong>Fritz Assistant</strong>, tu referencia tecnica para banos modulares. Rapido y preciso.<br><br>Como te llamas, maestro?`,
+    `${saludo}<br><br>Estoy aqui para darte las especificaciones de cada modulo en segundos.<br><br>Me dices tu nombre para empezar?`
+  ],
+
+  bienvenidaRecordado: (saludo, nombre) => [
+    `${saludo}, maestro <strong>${nombre}</strong>. Te recuerdo de nuestra ultima visita.<br><br>En que proyecto trabajamos hoy?`,
+    `${saludo} de nuevo, <strong>${nombre}</strong>. Listo para ayudarte.<br><br>Con que proyecto empezamos?`
+  ],
+
+  preguntaProyecto: nombre => [
+    `Un gusto, maestro <strong>${nombre}</strong>.<br><br>En que proyecto estas trabajando hoy?`,
+    `<strong>${nombre}</strong>, perfecto. En cual obra andas hoy?`,
+    `Bienvenido, maestro <strong>${nombre}</strong>. Dime, en que proyecto estamos?`
+  ],
+
+  preguntaColor: (nombre, proyecto) => [
+    `<strong>${proyecto}</strong>, entendido.<br><br>Que color de modulo te toca hoy, maestro <strong>${nombre}</strong>?`,
+    `Perfecto, estamos en <strong>${proyecto}</strong>.<br><br>Con que bano trabajamos?`,
+    `<strong>${proyecto}</strong>, listo. El color del modulo?`
+  ],
+
+  noEntiendo: nombre => [
+    `No logre identificar eso, maestro <strong>${nombre}</strong>. Puedes repetirlo?`,
+    `No te entendi bien. Intenta con el nombre o usa los botones de abajo.`,
+    `Disculpa, no reconoci esa opcion. Puedes escribirlo diferente, <strong>${nombre}</strong>?`
+  ],
+
+  otraConsulta: nombre => [
+    `Necesitas revisar otro modulo, maestro <strong>${nombre}</strong>?`,
+    `Seguimos con otro bano, <strong>${nombre}</strong>? Aqui estoy.`,
+    `Listo. Algo mas que necesites, maestro <strong>${nombre}</strong>?`
+  ],
+
+  cambioProyecto: nombre => [
+    `Claro, maestro <strong>${nombre}</strong>. A que proyecto cambiamos?`,
+    `Sin problema, <strong>${nombre}</strong>. Cual es el proyecto ahora?`
+  ]
+};
+
+const elegir = pool => pool[Math.floor(Math.random() * pool.length)];
+
+
+/* ================================================================
+   [SECCION 9] LOGICA DEL CHATBOT
+
+   Esta seccion maneja el flujo de la conversacion:
+   inicio -> nombre -> proyecto -> bano -> (bucle: bano o proyecto)
+
+   LOCALSTORAGE:
+   Se guarda: nombre del usuario (clave: 'fa_nombre')
+   Se limpia: con el boton "Reiniciar" del header
+
+   RUTA DE LAS IMAGENES:
+   Las imagenes se cargan desde la carpeta /imagenes relativa al
+   archivo index.html. Para GitHub Pages, la ruta es automatica.
+   Si una imagen no existe, se muestra el placeholder gris.
+
+   COMO CAMBIAR LA CARPETA DE IMAGENES:
+   Modifica la variable IMG_PATH (actualmente 'imagenes/')
+   ================================================================ */
+
+/* ── Ruta de imagenes ─────────────────────────────────────────── */
+const IMG_PATH = 'imagenes/';  /* <- CAMBIAR AQUI si mueves la carpeta */
+
+/* ── Estado de la conversacion ────────────────────────────────── */
+const S = {
+  fase:    'inicio',
+  nombre:  null,
+  proyecto: null
+};
+/* Fases: 'inicio' -> 'nombre' -> 'proyecto' -> 'bano' */
+
+/* ── Inicializacion ───────────────────────────────────────────── */
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('txtInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); onEnviar(); }
+  });
+  document.getElementById('btnSend').addEventListener('click', onEnviar);
+  arrancar();
+});
+
+async function arrancar() {
+  const nombreGuardado = localStorage.getItem('fa_nombre');
+  await typing(900);
+
+  if (nombreGuardado) {
+    /* Usuario conocido: saltar fase de nombre */
+    S.nombre = nombreGuardado;
+    S.fase   = 'proyecto';
+
+    /* Banner de bienvenida con nombre recordado */
+    const banner = document.createElement('div');
+    banner.className = 'banner-recall';
+    banner.textContent = 'Nombre recordado: ' + nombreGuardado;
+    agregar(banner);
+
+    botMsg(elegir(POOL.bienvenidaRecordado(getSaludo(), nombreGuardado)));
+    setTimeout(() => renderChipsProyectos(), 200);
+    setPlaceholder('Elige o escribe el proyecto...');
+  } else {
+    /* Usuario nuevo */
+    S.fase = 'nombre';
+    botMsg(elegir(POOL.bienvenida(getSaludo())));
+    setPlaceholder('Escribe tu nombre...');
+  }
+}
+
+/* ── Envio de mensaje ─────────────────────────────────────────── */
+function onEnviar() {
+  const inp   = document.getElementById('txtInput');
+  const texto = inp.value.trim();
+  if (!texto) return;
+  userMsg(texto);
+  inp.value = '';
+  dispatch(texto);
+}
+
+function dispatch(texto) {
+  switch (S.fase) {
+    case 'nombre':   handleNombre(texto);   break;
+    case 'proyecto': handleProyecto(texto); break;
+    case 'bano':     handleBano(texto);     break;
+    default:         arrancar();
+  }
+}
+
+/* ── Fase: captura de nombre ──────────────────────────────────── */
+async function handleNombre(texto) {
+  const nombre = capitalizar(texto);
+  S.nombre = nombre;
+  S.fase   = 'proyecto';
+
+  /* Guardar en LocalStorage */
+  localStorage.setItem('fa_nombre', nombre);
+
+  await typing(650);
+  botMsg(elegir(POOL.preguntaProyecto(nombre)));
+  renderChipsProyectos();
+  setPlaceholder('Elige o escribe el proyecto...');
+}
+
+/* ── Fase: seleccion de proyecto ──────────────────────────────── */
+async function handleProyecto(texto) {
+  const clave = detectarProyecto(texto);
+  if (!clave) {
+    await typing(500);
+    botMsg(elegir(POOL.noEntiendo(S.nombre)));
+    renderChipsProyectos();
+    return;
+  }
+
+  S.proyecto = clave;
+  S.fase     = 'bano';
+  const pNombre = PROYECTOS[clave].nombre;
+  actualizarHeader(pNombre);
+
+  await typing(700);
+  botMsg(elegir(POOL.preguntaColor(S.nombre, pNombre)));
+  renderChipsBanos(clave);
+  setPlaceholder('Elige o escribe el color...');
+}
+
+/* ── Fase: consulta de bano ───────────────────────────────────── */
+async function handleBano(texto) {
+  const norm = normalizar(texto);
+
+  /* Detectar solicitud de cambio de proyecto */
+  if (['cambiar','otro proyecto','cambio proyecto','proyecto','cambiar proyecto']
+      .some(k => norm.includes(normalizar(k)))) {
+    S.fase     = 'proyecto';
+    S.proyecto = null;
+    actualizarHeader(null);
+    await typing(500);
+    botMsg(elegir(POOL.cambioProyecto(S.nombre)));
+    renderChipsProyectos();
+    setPlaceholder('Elige o escribe el proyecto...');
+    return;
+  }
+
+  const clave = detectarBano(texto, S.proyecto);
+  if (!clave) {
+    await typing(500);
+    botMsg(elegir(POOL.noEntiendo(S.nombre)));
+    renderChipsBanos(S.proyecto);
+    return;
+  }
+
+  ocultarChips();
+  await typing(800);
+
+  const bano = PROYECTOS[S.proyecto].banos[clave];
+  mostrarFicha({
+    proyecto:  PROYECTOS[S.proyecto].nombre,
+    color:     bano.color,
+    tipo:      bano.tipo,
+    puerta:    bano.puerta,
+    cara2:     bano.cara2,
+    extras:    bano.extras,
+    imagen:    bano.imagen   /* nombre de archivo en /imagenes */
+  });
+
+  setTimeout(() => {
+    botMsg(elegir(POOL.otraConsulta(S.nombre)));
+    renderChipsBanos(S.proyecto);
+  }, 420);
+}
+
+/* ── Reiniciar conversacion ───────────────────────────────────── */
+function reiniciarConversacion() {
+  localStorage.removeItem('fa_nombre');
+  S.fase     = 'inicio';
+  S.nombre   = null;
+  S.proyecto = null;
+  document.getElementById('chat').innerHTML    = '';
+  document.getElementById('chips').innerHTML   = '';
+  document.getElementById('chips').style.display = 'none';
+  actualizarHeader(null);
+  setPlaceholder('Escribe tu nombre...');
+  arrancar();
+}
+
+
+/* ── Render: ficha tecnica ────────────────────────────────────── */
+function mostrarFicha(data) {
+  /*
+    COMO AGREGAR UN CAMPO NUEVO A LA FICHA:
+    Dentro del template string de ficha-rows, copia un bloque
+    .ficha-row y agrega el icono, label y campo del objeto data.
+    Ejemplo:
+    <div class="ficha-row">
+      <span class="ficha-icon">(icono)</span>
+      <div><span class="ficha-label">Mi campo:</span>${esc(data.miCampo)}</div>
+    </div>
+  */
+  const imgSrc = IMG_PATH + data.imagen;
+
+  const imgHtml = `<img
+    class="ficha-img"
+    src="${imgSrc}"
+    alt="Bano ${esc(data.color)}"
+    loading="lazy"
+    onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+  /><div class="ficha-placeholder" style="display:none">
+    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <rect x="3" y="3" width="18" height="18" rx="2"/>
+      <circle cx="8.5" cy="8.5" r="1.5"/>
+      <polyline points="21 15 16 10 5 21"/>
+    </svg>
+    <span>Imagen no disponible</span>
+  </div>`;
+
+  const extrasHtml = data.extras && data.extras.length
+    ? `<div class="ficha-row">
+         <span class="ficha-icon">📝</span>
+         <div>${data.extras.map(e => `<span class="extra-tag">${esc(e)}</span>`).join('')}</div>
+       </div>`
+    : '';
+
+  const div = crearMsgBot();
+  div.innerHTML = `
+    <div class="ficha">
+      ${imgHtml}
+      <div class="ficha-head">
+        <div class="ficha-proyecto">📍 ${esc(data.proyecto)}</div>
+        <div class="ficha-titulo">${esc(data.color)}</div>
+        <div class="ficha-tipo">${esc(data.tipo)}</div>
+      </div>
+      <div class="ficha-rows">
+        <div class="ficha-row">
+          <span class="ficha-icon">🚪</span>
+          <div><span class="ficha-label">Puerta:</span>${esc(data.puerta)}</div>
+        </div>
+        <div class="ficha-row">
+          <span class="ficha-icon">🧱</span>
+          <div><span class="ficha-label">Cara 2:</span>${esc(data.cara2)}</div>
+        </div>
+        ${extrasHtml}
+      </div>
+    </div>
+    <span class="ts">${hora()}</span>`;
+  agregar(div);
+}
+
+/* ── Render: chips de proyectos ───────────────────────────────── */
+function renderChipsProyectos() {
+  const wrap = document.getElementById('chips');
+  wrap.innerHTML = '';
+  Object.entries(PROYECTOS).forEach(([clave, p]) => {
+    const btn = document.createElement('button');
+    btn.className = 'chip proyecto';
+    btn.textContent = p.nombre;
+    btn.onclick = () => { userMsg(p.nombre); handleProyecto(p.nombre); };
+    wrap.appendChild(btn);
+  });
+  wrap.style.display = 'flex';
+}
+
+/* ── Render: chips de banos ───────────────────────────────────── */
+function renderChipsBanos(claveProyecto) {
+  const wrap = document.getElementById('chips');
+  wrap.innerHTML = '';
+  Object.entries(PROYECTOS[claveProyecto].banos).forEach(([clave, b]) => {
+    const btn = document.createElement('button');
+    btn.className = 'chip';
+    btn.textContent = b.label;
+    btn.onclick = () => { userMsg(b.label); handleBano(clave); };
+    wrap.appendChild(btn);
+  });
+
+  /* Chip para cambiar de proyecto */
+  const btnCambiar = document.createElement('button');
+  btnCambiar.className = 'chip cambiar-proyecto';
+  btnCambiar.textContent = 'Cambiar proyecto';
+  btnCambiar.onclick = () => { userMsg('Cambiar proyecto'); handleBano('cambiar proyecto'); };
+  wrap.appendChild(btnCambiar);
+
+  wrap.style.display = 'flex';
+}
+
+function ocultarChips() {
+  document.getElementById('chips').style.display = 'none';
+}
+
+
+/* ================================================================
+   [SECCION 10] DETECCION DE INTENCION Y UTILIDADES
+
+   SINONIMOS DE COLORES:
+   Si el usuario escribe un sinonimo (ej: "marron" en vez de "cafe"),
+   el sistema igual lo detecta. Para agregar sinonimos nuevos,
+   modifica el objeto SINONIMOS abajo.
+
+   COMO AGREGAR SINONIMOS A UN COLOR EXISTENTE:
+   Busca la clave del color en SINONIMOS y agrega el string al array.
+   Ejemplo: cafe: ['cafe','marron','brown','chocolate'],
+
+   COMO AGREGAR SINONIMOS PARA UN COLOR NUEVO:
+   Agrega una nueva entrada:
+   micolor: ['nombre1', 'nombre2', 'nombre3'],
+   ================================================================ */
+
+const SINONIMOS = {
+  azul:     ['azul','blue','celeste'],
+  rojo:     ['rojo','red','colorado'],
+  naranja:  ['naranja','orange','anaranjado'],
+  cafe:     ['cafe','marron','brown'],
+  negro:    ['negro','black','oscuro'],
+  magenta:  ['magenta','fucsia','rosa fuerte'],
+  verde:    ['verde','green'],
+  gris:     ['gris','grey','gray'],
+  morado:   ['morado','violeta','purpura','lila'],
+  mostaza:  ['mostaza','amarillo','yellow','dorado claro'],
+  turquesa: ['turquesa','aqua','agua','celeste verdoso'],
+  burdeo:   ['burdeo','bordo','vino','granate','rojo oscuro'],
+  blanco:   ['blanco','white'],
+  beige:    ['beige','arena','crema','hueso']
+  /* ── AGREGAR SINONIMOS NUEVOS AQUI:
+  micolor: ['nombre1','nombre2'],
+  ── */
+};
+
+function detectarProyecto(texto) {
+  const t = normalizar(texto);
+  for (const [clave, p] of Object.entries(PROYECTOS)) {
+    if (p.keywords.some(k => t.includes(normalizar(k)))) return clave;
+  }
+  return null;
+}
+
+function detectarBano(texto, claveProyecto) {
+  const t     = normalizar(texto);
+  const banos = PROYECTOS[claveProyecto]?.banos || {};
+  for (const clave of Object.keys(banos)) {
+    const syns = SINONIMOS[clave] || [clave];
+    if (syns.some(s => t.includes(normalizar(s)))) return clave;
+  }
+  return null;
+}
+
+/* ── Render: mensajes ─────────────────────────────────────────── */
+function botMsg(html) {
+  const div = crearMsgBot();
+  div.innerHTML = `<div class="bubble">${html}</div><span class="ts">${hora()}</span>`;
+  agregar(div);
+}
+
+function userMsg(texto) {
+  const div = document.createElement('div');
+  div.className = 'msg user';
+  div.innerHTML = `<div class="bubble">${esc(texto)}</div><span class="ts">${hora()}</span>`;
+  agregar(div);
+}
+
+function typing(ms) {
+  return new Promise(res => {
+    const wrap = document.createElement('div');
+    wrap.className = 'typing-wrap';
+    wrap.id = 'typing';
+    wrap.innerHTML = `<div class="typing-bubble"><span></span><span></span><span></span></div>`;
+    agregar(wrap);
+    setTimeout(() => { document.getElementById('typing')?.remove(); res(); }, ms);
+  });
+}
+
+function crearMsgBot() {
+  const div = document.createElement('div');
+  div.className = 'msg bot';
+  return div;
+}
+
+function agregar(el) {
+  const chat = document.getElementById('chat');
+  chat.appendChild(el);
+  setTimeout(() => { chat.scrollTop = chat.scrollHeight; }, 40);
+}
+
+/* ── Utilidades ───────────────────────────────────────────────── */
+function normalizar(s) {
+  return (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+}
+
+function capitalizar(s) {
+  return s.trim().toLowerCase().split(' ')
+    .map(p => p.charAt(0).toUpperCase() + p.slice(1)).join(' ');
+}
+
+function hora() {
+  return new Date().toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' });
+}
+
+function esc(s) {
+  return (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function getSaludo() {
+  const h = new Date().getHours();
+  if (h >= 5  && h < 12) return 'Buenos dias';
+  if (h >= 12 && h < 20) return 'Buenas tardes';
+  return 'Buenas noches';
+}
+
+function setPlaceholder(txt) {
+  document.getElementById('txtInput').placeholder = txt;
+}
+
+function actualizarHeader(proyecto) {
+  document.getElementById('headerSub').textContent =
+    proyecto
+      ? proyecto + ' · Banos Modulares'
+      : 'Banos Modulares · Asistente tecnico';
+}
+
+</script>
+</body>
+</html>
